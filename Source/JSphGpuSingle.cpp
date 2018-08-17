@@ -206,7 +206,7 @@ void JSphGpuSingle::ConfigDomain(){
   LoadCodeParticles(Np,Idp,Code);
   
   if(TPhase==FLOW_Multi){
-	UpdatePosVR(Np,Idp,Npb,AuxPos,Code); //ABVR
+	//UpdatePosVR(Np,Idp,Npb,AuxPos,Code); //ABVR
     }  
 //£££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££//MP
 //-Modifies the particle density data for the multiphase flow
@@ -519,13 +519,19 @@ void JSphGpuSingle::Interaction_ForcesMP(TpInter tinter){
   float *ARCPU=new float[Np]; cudaMemcpy(ARCPU,Arg,sizeof(float)*Np,cudaMemcpyDeviceToHost);
   unsigned *IDCPU=new unsigned[Np]; cudaMemcpy(IDCPU,Idpg,sizeof(unsigned)*Np,cudaMemcpyDeviceToHost);
   
-  for (unsigned p2=0; p2<Np; p2++){
-  if (IDCPU[p2] == 386){ std::cout << ARCPU[p2] << "\t" << IDCPU[p2] << "\n"; system("PAUSE");}
-  if (IDCPU[p2] == 775){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] << "\n";system("PAUSE");}
+//  for (unsigned p2=0; p2<Np; p2++){
+//  if (IDCPU[p2] == 14){ std::cout << ARCPU[p2] << "\t" << IDCPU[p2] << "\n"; system("PAUSE");} //ABVR
+ // if (IDCPU[p2] == 793){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] << "\n";system("PAUSE");}
+//	if (IDCPU[p2] == 794){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] << "\n";system("PAUSE");}
+//	if (IDCPU[p2] == 795){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] << "\n";system("PAUSE");}
+//	if (IDCPU[p2] == 796){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] << "\n";system("PAUSE");}
+//	if (IDCPU[p2] == 797){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] << "\n";system("PAUSE");}
+//	if (IDCPU[p2] == 798){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] << "\n";system("PAUSE");}
+//	if (IDCPU[p2] == 799){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] << "\n";system("PAUSE");}
  // if (IDCPU[p2] == 817){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] <<"\n";system("PAUSE");}
  // if (IDCPU[p2] == 823){ std::cout << ARCPU[p2] << "\t"<< IDCPU[p2] <<"\n";system("PAUSE");}
 
-  }
+//  }
   //-Interaccion DEM Floating-Bound & Floating-Floating //(DEM)
   //-Interaction DEM Floating-Bound & Floating-Floating //(DEM)
   if(UseDEM)cusph::Interaction_ForcesDem(Psimple,CellMode,BlockSizes.forcesdem,CaseNfloat,CellDivSingle->GetNcells(),CellDivSingle->GetBeginCell(),CellDivSingle->GetCellDomainMin(),Dcellg,FtRidpg,DemDatag,float(DemDtForce),Posxyg,Poszg,PsPospressg,Velrhopg,Codeg,Idpg,ViscDtg,Aceg,NULL);

@@ -638,9 +638,15 @@ void JSph::LoadCaseConfig(){
 		if(!block.ExistsSubValue("visco","value"))RunException(met,fun::PrintStr("Object mk=%u - Value of visco is invalid.",block.GetMk()));
 		PhaseData[c].PhaseType=mpblock.GetSubValueInt("phasetype","value",false,0);
 		if(!block.ExistsSubValue("phasetype","value"))RunException(met,fun::PrintStr("Object mk=%u - Phase is invalid.",block.GetMk()));
-		PhaseData[c].PhaseDp=mpblock.GetSubValueDouble("PhaseDp","value",false,Dp); //ABVR
+		PhaseData[c].PhaseDp=(float)mpblock.GetSubValueDouble("PhaseDp","value",false,Dp); //ABVR
 		if(!block.ExistsSubValue("PhaseDp","value"))RunException(met,fun::PrintStr("Object mk=%u - Dp is invalid.",block.GetMk()));       ////ABVR
-		PhaseData[c].PhaseH=PhaseData[c].PhaseDp*CoefH; //ABVR
+		PhaseData[c].PhaseH=(float)CoefH*PhaseData[c].PhaseDp;
+		/*if(Simulate2D) {
+			PhaseData[c].PhaseH=CoefH*powf(PhaseData[c].PhaseDp*PhaseData[c].PhaseDp,0.5f);
+		}
+		else{
+			PhaseData[c].PhaseH=CoefH*powf(PhaseData[c].PhaseDp*PhaseData[c].PhaseDp*PhaseData[c].PhaseDp,0.5f);
+		}//ABVR*/
 		PhaseData[c].PhaseAwen=0.0f; //ABVR
 		PhaseData[c].PhaseBwen=0.0f; //ABVR
 		PhaseData[c].PhaseH2 =0.0f;
@@ -648,6 +654,7 @@ void JSph::LoadCaseConfig(){
 		PhaseData[c].PhaseFourh2 =0.0f;
 		PhaseData[c].PhaseDosh =0.0f;
 		PhaseData[c].PhaseEta2 =0.0f;
+		
 		std::cout<<PhaseData[c].PhaseH<<"\t"<<PhaseData[c].PhaseDp<<"\n";
 		PhaseData[c].PhaseSurf=(float)mpblock.GetSubValueFloat("surfcoef","value",true,0);
 		if(PhaseData[c].PhaseSurf)Surft=true;
@@ -871,9 +878,9 @@ void JSph::LoadCodeParticles(unsigned np,const unsigned *idp,word *code)const{
   }
 }
 
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//VR
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//ABVR
 //Update initial particle position for multires flows
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//VR
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//ABVR
 void JSph::UpdatePosVR(unsigned np, const unsigned *idp, unsigned npb,tdouble3* pos, word *code){
   const char met[]="UpdatePosVR";
   int i = 1;
@@ -927,7 +934,7 @@ void JSph::UpdatePosVR(unsigned np, const unsigned *idp, unsigned npb,tdouble3* 
 //void JSph::CheckPos()
 //£££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££££//MP
 //==============================================================================
-/// Updates initial particle density according to case configuration for multiphase flows. -££//MP
+/// Updates initial particle density according to case configuration for multiphase flows. -££//MPABVR
 //==============================================================================
 void JSph::UpdateRhopMP(unsigned np, unsigned npb,tdouble3* pos,tfloat4 *velrhop,word *code){
 	const char met[]="UpdateRhopMP";
@@ -1144,12 +1151,12 @@ void JSph::ConfigConstants(bool simulate2d){
 					const double wdeltap=a2*(1.-1.5*deltap*deltap+0.75*deltap*deltap*deltap);
 					CubicCte.od_wdeltap=float(1./wdeltap);
 					CubicCte.a1=float(a1);
-					CubicCte.a2=float(a2);
+					PhaseData[iphase].PhaseCubic_a2=float(a2);
 					CubicCte.aa=float(aa);
-					CubicCte.a24=float(0.25*a2);
-					CubicCte.c1=float(-3.*aa);
-					CubicCte.d1=float(9.*aa/4.);
-					CubicCte.c2=float(-3.*aa/4.);
+					PhaseData[iphase].PhaseCubic_a24=float(0.25*a2);
+					PhaseData[iphase].PhaseCubic_c1=float(-3.*aa);
+					PhaseData[iphase].PhaseCubic_d1=float(9.*aa/4.);
+					PhaseData[iphase].PhaseCubic_c2=float(-3.*aa/4.);
 				}
 			}
 				else{
@@ -1165,12 +1172,12 @@ void JSph::ConfigConstants(bool simulate2d){
 					const double wdeltap=a2*(1.-1.5*deltap*deltap+0.75*deltap*deltap*deltap);
 					CubicCte.od_wdeltap=float(1./wdeltap);
 					CubicCte.a1=float(a1);
-					CubicCte.a2=float(a2);
+					PhaseData[iphase].PhaseCubic_a2=float(a2);
 					CubicCte.aa=float(aa);
-					CubicCte.a24=float(0.25*a2);
-					CubicCte.c1=float(-3.*aa);
-					CubicCte.d1=float(9.*aa/4.);
-					CubicCte.c2=float(-3.*aa/4.);
+					PhaseData[iphase].PhaseCubic_a24=float(0.25*a2);
+					PhaseData[iphase].PhaseCubic_c1=float(-3.*aa);
+					PhaseData[iphase].PhaseCubic_d1=float(9.*aa/4.);
+					PhaseData[iphase].PhaseCubic_c2=float(-3.*aa/4.);
 				}
 			}
 		}
